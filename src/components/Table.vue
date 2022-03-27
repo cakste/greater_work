@@ -18,10 +18,6 @@
 				<td v-for="(col, i) in columns" :key="i">
 					{{ user[col] }}
 				</td>
-				<!---
-				<td v-for="(val, j) in user" :key="j">{{ val }}</td>
-				<td>{{user.$(id)}}</td>
-				-->
 			</tr>
 		</tbody>
 	</table>
@@ -38,14 +34,9 @@
 
 
 <script>
-/* Todo
-	* Create a refresh button?
-
-
-*/
 
 export default {
-	name: 'HelloWorld2',
+	name: 'DataTable',
 	props: {
 		msg2: String,
 	},
@@ -59,7 +50,6 @@ export default {
 			currentPage: 1,
 			ascending: true,
 			sortCol: null,
-			message: null,
 			maxColumns: 5,
 		}
 	},
@@ -81,18 +71,13 @@ export default {
 				console.log(response_json)
 				break;
 			} catch (e) {
-				let sleep_time = 300//Math.floor(Math.random()*400+100)
+				let sleep_time = 300
 				await sleep(sleep_time)
-				// Some type of sleep function? Not really sure how this too many requests occur.
 				continue;
 			}
 		}
 
 		await this.fillOutData();
-
-		//this.users[5]["employee_name"] = ''
-
-		//this.columns = this.updateColumns()
 
 	},
 
@@ -132,15 +117,8 @@ export default {
 						}
 
 					}
-
-					/*
-					if (!keyValues.includes(key) && this.filledData[i][key] !== "") {
-						keyValues.push(key)
-					}
-					*/
 				}
 			}
-			console.log(valueCounts)
 
 			/*
 				Take out maxColumns number of keys which has the most non-zero values
@@ -155,10 +133,8 @@ export default {
 				keyValues = items.map(
 					(e) => {return e[0]}
 				);
-				console.log(keyValues)
 				keyValues = keyValues.slice(0, this.maxColumns)
 			}
-
 
 			// If there is a key that some user has a non-zero value,
 			// set zero values for that key for all other users.
@@ -174,26 +150,6 @@ export default {
 			// chosen here.
 			this.columns = keyValues
 		},
-		/*
-		updateColumns () {
-			//Gets columns based on our computed value.
-			const columns = []
-
-			if (this.filledData !== null) {
-				// Should try if an empty list crashes this!
-				for (let key in this.filledData[0]) {
-					columns.push(key)
-				}
-			} else {
-				console.log("Return null in getColumns")
-				return null
-			}
-			console.log("Returning columns")
-			console.log(columns)
-			return columns
-
-		},
-		*/
 		sortData (col) {
 			// Keep track of the last sorted column. Also keep track of if
 			// the data is sorted in a ascending or descending way. If the same
@@ -228,7 +184,6 @@ export default {
 				}
 				return 0
 			})
-			console.log(col)
 		},
 		getRows () {
 			if (this.filledData === null) {
@@ -267,9 +222,7 @@ table {
   0px 10px 20px rgba(0,0,0,0.05),
   0px 20px 20px rgba(0,0,0,0.05),
   0px 30px 20px rgba(0,0,0,0.05);
-
 }
-
 
 table th {
   text-transform: uppercase;
@@ -280,17 +233,21 @@ table th {
   padding: 8px;
   min-width: 30px;
 }
+
 table th:hover {
         background: #6fcbb5;
-      }
+}
+
 table td {
   text-align: left;
   padding: 8px;
   border-right: 2px solid #7D82A8;
 }
+
 table td:last-child {
   border-right: none;
 }
+
 table tbody tr:nth-child(2n) td {
   background: #f1eff7;
 }
@@ -322,9 +279,9 @@ table tbody tr:nth-child(2n) td {
   margin: 0px 5px;
   cursor: pointer;
 }
+
 .number:hover, .number.active {
   background: #6fcbb5;
 }
-
 
 </style>

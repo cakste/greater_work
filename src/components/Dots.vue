@@ -1,155 +1,105 @@
 <template>
-	<div class="hello">
-	</div>
-	<canvas class="dots">Your browser does not support canvas.</canvas>
-	<h1>skdl</h1>
+	<canvas id="canvas"></canvas>
 </template>
-
-<!--// Access a child components variables? Nice to include their message. -->
 
 <script>
 
 export default {
-	name: 'HelloWorld',
+	name: 'backgroundDots',
 	components: {
-
-	},
-	props: {
-		msg: String
+		
 	},
 
 	data() {
 		return {
-			count: 1,
-			APIData: [],
-			exitCode: "STILL FETCHING...",
-			testing: [],
-			completed: false
+			ctx: null,
+			dots: null,
+			width: 0,
+			height: 0,
 		}
 	},
 
 	mounted() {
-		// Try Async
-		/*
-		const response = await fetch("http://dummy.restapiexample.com/api/v1/employees");
-		const tmp = await response.data;
-		if (response.status == 429) {
-			this.exitCode = "429";
-			this.completed = false
+		var canvas = document.getElementById("canvas")
+		this.ctx = canvas.getContext("2d")
+
+		// Create random dots.
+		this.dots = []
+		var radius = 25;
+		var signs = ['-', '+']
+		for (let i = 0; i < 8; i++) {
+			var dot = {};
+			dot['x'] = Math.floor(Math.random()*(window.innerWidth-2*radius)) + radius
+			dot['y'] = Math.floor(Math.random()*(window.innerHeight-2*radius)) + radius
+			dot['xMove'] = signs[Math.floor(Math.random()*2)]
+			dot['yMove'] = signs[Math.floor(Math.random()*2)]
+			dot['radius'] = radius
+			this.dots.push(dot)
 		}
-		else {
-			this.exitCode = "OK!"
-			console.log(tmp)
-			this.completed = true
-		}
-		this.APIData = tmp;
-		*/
-
-		/* //Not Async
-		fetch("http://dummy.restapiexample.com/api/v1/employees")
-			.then(response => {
-			this.APIData = response.data;
-			console.log(this.APIData)
-			})
-			.catch(error => {
-				alert(error)
-			})
-			this.testing = typeof(this.APIData)
-		*/
-
-		// ----------------------------------------
-
-		var canvas = 'canvas.dots';
-		var context = canvas[0].getContext('2d');
-		var canvasWidth = canvas.width();
-		var canvasHeight = canvas.height();
-		let i;
-
-		console.log()
-		canvas.attr({height: canvasHeight, width: canvasWidth});
-
-		// Set an array of dot objects.
-		var dots = [
-			{ x: 100, y: 100, radius: 25, xMove: '+', yMove: '+' },
-			{ x: 40, y: 200, radius: 25, xMove: '-', yMove: '+' },
-			{ x: 250, y: 300, radius: 25, xMove: '+', yMove: '-' },
-			{ x: 150, y: 35, radius: 25, xMove: '-', yMove: '-' }
-		];
-
-		// Notice in the moveDot function we can make dots go faster if we increment
-		// by more than 1 pixel each time.
-		var frameLength = 2;
 
 		// Draw each dot in the dots array.
-		for( i = 0; i < dots.length; i++ ) {
-			this.drawDot(dots[i]);
+		for (let i = 0; i < this.dots.length; i++) {
+			this.drawDot(this.dots[i])
 		}
 
-		window.requestAnimationFrame(moveDot);
-
-
-
-
-		// Render it again
-		window.requestAnimationFrame(moveDot);
-		}
-
+		// Continue to update dots. Update canvas size when window changes size.
+		window.setInterval(() => {
+			document.getElementById("canvas").width = window.innerWidth
+			document.getElementById("canvas").height = window.innerHeight
+			this.moveDot()
+		}, 15)
 	},
 
 	methods: {
-		increment() {
-			this.count++
-		},
 		drawDot(dot) {
-			this.context.beginPath();
-			this.context.arc(dot.x, dot.y, dot.radius, 0, 2 * Math.PI, false);
-			this.context.fillStyle = '#F03C69';
-			this.context.fill();
+			this.ctx.beginPath()
+			this.ctx.arc(dot.x, dot.y, dot.radius, 0, 2 * Math.PI, false)
+			this.ctx.fillStyle = '#1e0072'
+			this.ctx.fill()
 		},
 		moveDot() {
-			context.clearRect(0, 0, canvasWidth, canvasHeight)
+
+			var dots = this.dots
+			var frameLength = 2
+
+			this.ctx.clearRect(0, 0, window.outerWidth, window.outerHeight)
+
 			// Iterate over all the dots.
 			for(let i = 0; i < dots.length; i++ ) {
 
-				if( dots[i].xMove == '+' ) {
-					dots[i].x += frameLength;
+				if (dots[i].xMove == '+') {
+					dots[i].x += frameLength
 				} else {
-					dots[i].x -= frameLength;
+					dots[i].x -= frameLength
 				}
-				if( dots[i].yMove == '+' ) {
-					dots[i].y += frameLength;
+				if (dots[i].yMove == '+') {
+					dots[i].y += frameLength
 				} else {
-					dots[i].y -= frameLength;
+					dots[i].y -= frameLength
 				}
 
 				this.drawDot(dots[i])
 
-				if( (dots[i].x + dots[i].radius) >= canvasWidth ) {
+				if ((dots[i].x + dots[i].radius) >= window.innerWidth ) {
 					dots[i].xMove = '-';
 				}
-				if( (dots[i].x - dots[i].radius) <= 0 ) {
+				if ((dots[i].x - dots[i].radius) <= 0 ) {
 					dots[i].xMove = '+';
 				}
-				if( (dots[i].y + dots[i].radius) >= canvasHeight ) {
+				if ((dots[i].y + dots[i].radius) >= window.innerHeight ) {
 					dots[i].yMove = '-';
 				}
-				if( (dots[i].y - dots[i].radius) <= 0 ) {
+				if ((dots[i].y - dots[i].radius) <= 0 ) {
 					dots[i].yMove = '+';
 				}
 			}
-	},
-
+		},
+	}
 }
-
-
-
-
-// ----------------------------------------
 
 
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 h3 {
   margin: 40px 0 0;
@@ -166,7 +116,4 @@ a {
   color: #42b983;
 }
 
-.hello {
-	margin: 60px 0px 0px 0px
-}
 </style>
