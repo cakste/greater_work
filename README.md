@@ -1,6 +1,6 @@
 # Greater Than Work Sample
 
 
-# Project Setup
+## Project Setup
 
 npm run serve
